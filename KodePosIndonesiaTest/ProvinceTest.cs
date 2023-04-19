@@ -13,51 +13,25 @@ namespace KodePosIndonesiaTest
         }
 
         [Test]
-        public async Task GetAllProvince()
+        public async Task GetAsync()
         {
-            KodePos kodePos = new();
-            await foreach(ProvinceModel a in kodePos.ProvinceRepository.GetAllAsync())
+            using KodePos kodePos = new();
+            IEnumerable<ProvinceModel> provinceModels = await kodePos.ProvinceRepository.GetAsync();
+            foreach (ProvinceModel a in provinceModels)
             {
                 Debug.WriteLine($"{a.Id} : {a.Name}");
             }
-            Assert.Pass();
+            Assert.That(provinceModels, Is.Not.Null);
+            Assert.That(provinceModels.Count(), Is.EqualTo(34));
         }
 
         [Test]
-        public async Task GetProvinceById()
+        public async Task GetSingleAsync()
         {
-            KodePos kodePos = new();
-            ProvinceModel a = await kodePos.ProvinceRepository.GetByIdAsync(22);
-            if (a != null) 
-            {
-                if(a.Name == "BALI")
-                {
-                    Assert.That(true);
-                }
-                else
-                {
-                    Assert.Fail(@"Province Name is not Bali, but " + a.Name);
-                }
-            }
-            else
-            {
-                Assert.Fail("Fail, a is null");
-            }
-        }
-
-        [Test]
-        public async Task CountProvince()
-        {
-            KodePos kodePos = new();
-            IEnumerable<ProvinceModel> a = await kodePos.ProvinceRepository.GetAllPolledAsync();
-            if(a.Count() == 34)
-            {
-                Assert.That(true);
-            }
-            else
-            {
-                Assert.Fail("Records count is not 34");
-            }
+            using KodePos kodePos = new();
+            ProvinceModel a = await kodePos.ProvinceRepository.GetSingleAsync("27a85166-ff53-480d-afab-c560aa5bc4d5");
+            Assert.That(a, Is.Not.Null);
+            Assert.That(a.Name, Is.EqualTo("DKI JAKARTA"));
         }
     }
 }
