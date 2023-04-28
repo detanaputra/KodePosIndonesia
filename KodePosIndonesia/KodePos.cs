@@ -4,6 +4,7 @@ namespace KodePosIndonesia
 {
     public class KodePos : IDisposable, IKodePos
     {
+        public static IServiceProvider ServiceProvider { get; private set; }
         private bool disposed = false;
         private IHttpClientFactory httpClientFactory;
 
@@ -11,10 +12,7 @@ namespace KodePosIndonesia
         {
             get
             {
-                if (provinceRepository == null)
-                {
-                    provinceRepository ??= new FirebaseRepository<ProvinceModel>(httpClientFactory.CreateClient(nameof(ProvinceModel)), "Id");
-                }
+                provinceRepository ??= new FirebaseRepository<ProvinceModel>(httpClientFactory.CreateClient(nameof(ProvinceModel)), ProvinceIndex.Id.ToString());
                 return provinceRepository;
             }
         }
@@ -24,10 +22,7 @@ namespace KodePosIndonesia
         {
             get
             {
-                if (cityRepository == null)
-                {
-                    cityRepository ??= new FirebaseRepository<CityModel>(httpClientFactory.CreateClient(nameof(CityModel)), "ProvinceId");
-                }
+                cityRepository ??= new FirebaseRepository<CityModel>(httpClientFactory.CreateClient(nameof(CityModel)), CityIndex.ProvinceId.ToString());
                 return cityRepository;
             }
         }
@@ -37,10 +32,7 @@ namespace KodePosIndonesia
         {
             get
             {
-                if (districtRepository == null)
-                {
-                    districtRepository ??= new FirebaseRepository<DistrictModel>(httpClientFactory.CreateClient(nameof(DistrictModel)), "CityId");
-                }
+                districtRepository ??= new FirebaseRepository<DistrictModel>(httpClientFactory.CreateClient(nameof(DistrictModel)), DistrictIndex.CityId.ToString());
                 return districtRepository;
             }
         }
@@ -50,10 +42,7 @@ namespace KodePosIndonesia
         {
             get
             {
-                if (subDistrictRepository == null)
-                {
-                    subDistrictRepository ??= new FirebaseRepository<SubDistrictModel>(httpClientFactory.CreateClient(nameof(SubDistrictModel)), "DistrictId");
-                }
+                subDistrictRepository ??= new FirebaseRepository<SubDistrictModel>(httpClientFactory.CreateClient(nameof(SubDistrictModel)), SubDistrictIndex.DistrictId.ToString());
                 return subDistrictRepository;
             }
         }
@@ -63,8 +52,8 @@ namespace KodePosIndonesia
         {
             ServiceCollection serviceCollection = new();
             ConfigureService(serviceCollection);
-            ServiceProvider services = serviceCollection.BuildServiceProvider();
-            httpClientFactory = services.GetRequiredService<IHttpClientFactory>();
+            ServiceProvider = serviceCollection.BuildServiceProvider();
+            httpClientFactory = ServiceProvider.GetRequiredService<IHttpClientFactory>();
         }
 
         ~KodePos()

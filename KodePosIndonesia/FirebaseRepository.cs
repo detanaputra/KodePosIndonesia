@@ -5,12 +5,18 @@ namespace KodePosIndonesia
     public class FirebaseRepository<T> : IRepository<T> where T : BaseModel
     {
         private HttpClient httpClient;
-        private string indexpath = string.Empty;
+        private string indexOn = string.Empty;
 
-        public FirebaseRepository(HttpClient client, string indexpath)
+        public FirebaseRepository(HttpClient client, string indexOn)
         {
             httpClient = client;
-            this.indexpath = indexpath;
+            this.indexOn = indexOn;
+        }
+
+        public string IndexOn 
+        {
+            get { return this.indexOn; }
+            set { this.indexOn = value; }
         }
 
         public void Dispose() => httpClient?.Dispose();
@@ -26,9 +32,9 @@ namespace KodePosIndonesia
                 : dict.ToList();
         }
 
-        public async Task<IEnumerable<T>> GetAsync(int parentId)
+        public async Task<IEnumerable<T>> GetAsync(int searchQuery)
         {
-            HttpResponseMessage response = await httpClient.GetAsync($".json?orderBy=\"{indexpath}\"&startAt={parentId}&endAt={parentId}&limitToFirst=100");
+            HttpResponseMessage response = await httpClient.GetAsync($".json?orderBy=\"{indexOn}\"&startAt={searchQuery}&endAt={searchQuery}&limitToFirst=100");
             response.EnsureSuccessStatusCode();
             string? jsonStr = await response.Content.ReadAsStringAsync();
             Dictionary<string, T>? dict = JsonConvert.DeserializeObject<Dictionary<string, T>>(jsonStr);
@@ -44,6 +50,17 @@ namespace KodePosIndonesia
             string? jsonStr = await response.Content.ReadAsStringAsync();
             T? obj = JsonConvert.DeserializeObject<T>(jsonStr);
             return obj ?? throw new ArgumentNullException("JsonConvert can't convert the json object from Firebase Realtime Database");
+        }
+
+        public async Task<T?> GetSingleAsync(int id)
+        {
+            HttpResponseMessage response = await httpClient.GetAsync($".json?orderBy=\"{indexOn}\"&startAt={id}&endAt={id}&limitToFirst=100");
+            response.EnsureSuccessStatusCode();
+            string? jsonStr = await response.Content.ReadAsStringAsync();
+            Dictionary<string, T>? dict = JsonConvert.DeserializeObject<Dictionary<string, T>>(jsonStr);
+            return dict == null
+                ? throw new ArgumentNullException("JsonConvert can't convert the json object from Firebase Realtime Database")
+                : dict.ToList().FirstOrDefault();
         }
     }
 
