@@ -11,7 +11,7 @@
         {
             get => SubDistrict.PostalCode;
         }
-        public override string? Name { get => SubDistrict.Name; }
+        public override string Name { get => SubDistrict.Name; }
         public override int Id { get => SubDistrict.Id;}
 
         public override string ToString()

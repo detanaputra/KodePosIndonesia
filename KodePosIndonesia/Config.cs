@@ -1,4 +1,6 @@
-﻿namespace KodePosIndonesia
+﻿using System;
+
+namespace KodePosIndonesia
 {
     public class Config
     {

@@ -33,5 +33,14 @@ namespace KodePosIndonesiaTest
             Assert.That(a, Is.Not.Null);
             Assert.That(a.Name, Is.EqualTo("DKI JAKARTA"));
         }
+
+        [Test]
+        public async Task GetSingleAsyncNull()
+        {
+            using KodePos kodePos = new();
+            // trigger not found
+            ProvinceModel a = await kodePos.ProvinceRepository.GetSingleAsync("nullvalue");
+            Assert.That(a, Is.Null);
+        }
     }
 }

@@ -1,4 +1,8 @@
-﻿namespace KodePosIndonesia
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace KodePosIndonesia
 {
     public interface IRepository<T> : IDisposable where T : BaseModel
     {

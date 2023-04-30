@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
 using System.Diagnostics;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace KodePosIndonesia.Extensions
 {

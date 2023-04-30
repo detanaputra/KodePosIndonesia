@@ -1,5 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
+using System;
+using System.Net.Http;
+
 namespace KodePosIndonesia
 {
     public class KodePos : IDisposable, IKodePos
@@ -12,45 +15,57 @@ namespace KodePosIndonesia
         {
             get
             {
-                provinceRepository ??= new FirebaseRepository<ProvinceModel>(httpClientFactory.CreateClient(nameof(ProvinceModel)), ProvinceIndex.Id.ToString());
+                if (provinceRepository == null)
+                {
+                    provinceRepository = new FirebaseRepository<ProvinceModel>(httpClientFactory.CreateClient(nameof(ProvinceModel)), ProvinceIndex.Id.ToString());
+                }
                 return provinceRepository;
             }
         }
-        private IRepository<ProvinceModel>? provinceRepository;
+        private IRepository<ProvinceModel> provinceRepository;
 
         public IRepository<CityModel> CityRepository
         {
             get
             {
-                cityRepository ??= new FirebaseRepository<CityModel>(httpClientFactory.CreateClient(nameof(CityModel)), CityIndex.ProvinceId.ToString());
+                if (cityRepository == null)
+                {
+                    cityRepository = new FirebaseRepository<CityModel>(httpClientFactory.CreateClient(nameof(CityModel)), CityIndex.ProvinceId.ToString());
+                }
                 return cityRepository;
             }
         }
-        private IRepository<CityModel>? cityRepository;
+        private IRepository<CityModel> cityRepository;
 
         public IRepository<DistrictModel> DistrictRepository
         {
             get
             {
-                districtRepository ??= new FirebaseRepository<DistrictModel>(httpClientFactory.CreateClient(nameof(DistrictModel)), DistrictIndex.CityId.ToString());
+                if (districtRepository == null)
+                {
+                    districtRepository = new FirebaseRepository<DistrictModel>(httpClientFactory.CreateClient(nameof(DistrictModel)), DistrictIndex.CityId.ToString());
+                }
                 return districtRepository;
             }
         }
-        private IRepository<DistrictModel>? districtRepository;
+        private IRepository<DistrictModel> districtRepository;
 
         public IRepository<SubDistrictModel> SubDistrictRepository
         {
             get
             {
-                subDistrictRepository ??= new FirebaseRepository<SubDistrictModel>(httpClientFactory.CreateClient(nameof(SubDistrictModel)), SubDistrictIndex.DistrictId.ToString());
+                if (subDistrictRepository == null)
+                {
+                    subDistrictRepository = new FirebaseRepository<SubDistrictModel>(httpClientFactory.CreateClient(nameof(SubDistrictModel)), SubDistrictIndex.DistrictId.ToString());
+                }
                 return subDistrictRepository;
             }
         }
-        private IRepository<SubDistrictModel>? subDistrictRepository;
+        private IRepository<SubDistrictModel> subDistrictRepository;
 
         public KodePos()
         {
-            ServiceCollection serviceCollection = new();
+            ServiceCollection serviceCollection = new ServiceCollection();
             ConfigureService(serviceCollection);
             ServiceProvider = serviceCollection.BuildServiceProvider();
             httpClientFactory = ServiceProvider.GetRequiredService<IHttpClientFactory>();
